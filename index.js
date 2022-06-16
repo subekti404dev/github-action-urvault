@@ -6,6 +6,7 @@ const main = async () => {
     const baseURL = core.getInput("base-url");
     const path = core.getInput("path");
     const token = core.getInput("token");
+    const key = core.getInput("key");
 
     let version;
 
@@ -24,8 +25,9 @@ const main = async () => {
 
     const response = await axios.get(url, opts);
     const data = response?.data?.data?.data;
-    console.log(data);
-    core.setOutput("data", data);
+    let output = data;
+    if (key) output = data[key]; 
+    core.setOutput("data", output);
   } catch (error) {
     core.setFailed(error.message);
   }
