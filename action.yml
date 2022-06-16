@@ -17,6 +17,10 @@ inputs:
     description: 'key of your secret'
     required: false
     default: null
+  to-file:
+    description: 'save to file'
+    required: false
+    default: null
   
 outputs:
   data:
