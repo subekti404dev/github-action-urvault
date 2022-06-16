@@ -17,5 +17,5 @@ outputs:
   data:
     description: ''
 runs:
-  using: 'node14'
+  using: 'node16'
   main: 'index.js'
