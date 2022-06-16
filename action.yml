@@ -5,14 +5,19 @@ inputs:
     description: 'base-url your vault'
     required: true
     default: null
-  path:
-    description: 'path of your secret'
-    required: true
-    default: null
   token:
     description: 'token of your vault'
     required: true
     default: null
+  path:
+    description: 'path of your secret'
+    required: true
+    default: null
+  key:
+    description: 'key of your secret'
+    required: true
+    default: null
+  
 outputs:
   data:
     description: ''
