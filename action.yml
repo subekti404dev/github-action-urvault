@@ -1,0 +1,21 @@
+name: 'Vault Secret'
+description: 'A Github action to get vault secret'
+inputs:
+  base-url:
+    description: 'base-url your vault'
+    required: true
+    default: null
+  path:
+    description: 'path of your secret'
+    required: true
+    default: null
+  token:
+    description: 'token of your vault'
+    required: true
+    default: null
+outputs:
+  data:
+    description: ''
+runs:
+  using: 'node12'
+  main: 'index.js'
