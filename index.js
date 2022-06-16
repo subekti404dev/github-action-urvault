@@ -1,5 +1,6 @@
 const axios = require("axios").default;
 const core = require("@actions/core");
+const fs = require('fs');
 
 const main = async () => {
   try {
@@ -7,6 +8,7 @@ const main = async () => {
     const path = core.getInput("path");
     const token = core.getInput("token");
     const key = core.getInput("key");
+    const filename = core.getInput("to-file");
 
     let version;
 
@@ -26,7 +28,12 @@ const main = async () => {
     const response = await axios.get(url, opts);
     const data = response?.data?.data?.data;
     let output = data;
-    if (key) output = data[key]; 
+    if (key) output = data[key];
+    
+    if (filename) {
+      fs.writeFileSync(filename, output);
+    }
+    
     core.setOutput("data", output);
   } catch (error) {
     core.setFailed(error.message);
