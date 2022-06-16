@@ -18,12 +18,12 @@ const main = async () => {
       },
     };
     if (!version) {
-      const urlVersion = `${baseURL}/v1/secret/metadata/${path}`;
+      const urlVersion = `${baseURL}/v1/github-actions/metadata/${path}`;
       const respVersion = await axios.get(urlVersion, opts);
       version = respVersion?.data?.data?.current_version || 1;
     }
 
-    const url = `${baseURL}/v1/secret/data/${path}?version=${version}`;
+    const url = `${baseURL}/v1/github-actions/data/${path}?version=${version}`;
 
     const response = await axios.get(url, opts);
     const data = response?.data?.data?.data;
