@@ -15,7 +15,7 @@ inputs:
     default: null
   key:
     description: 'key of your secret'
-    required: true
+    required: false
     default: null
   
 outputs:
