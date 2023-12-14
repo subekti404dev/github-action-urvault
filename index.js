@@ -21,7 +21,7 @@ const main = async () => {
       ext = '.yaml'
     }
 
-    const filepath = filename || id + ext ;
+    const filepath = filename || (id + ext) ;
     const url = `${baseURL}/v1/vwt/${id}?type=${type}`;
     const { data } = await axios.get(url, {
       headers: {
