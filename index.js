@@ -7,7 +7,7 @@ const main = async () => {
     const baseURL = core.getInput("baseurl");
     const token = core.getInput("token");
     const id = core.getInput("id");
-    const filename = core.getInput("filename") || id;
+    const filename = core.getInput("filename");
     const type = core.getInput("type");
 
     let ext = '.env';
@@ -21,7 +21,7 @@ const main = async () => {
       ext = '.yaml'
     }
 
-    const filepath = filename + ext;
+    const filepath = filename || id + ext ;
     const url = `${baseURL}/v1/vwt/${id}?type=${type}`;
     const { data } = await axios.get(url, {
       headers: {
