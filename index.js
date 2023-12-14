@@ -4,37 +4,32 @@ const fs = require('fs');
 
 const main = async () => {
   try {
-    const baseURL = core.getInput("base-url");
-    const path = core.getInput("path");
+    const baseURL = core.getInput("baseurl");
     const token = core.getInput("token");
-    const key = core.getInput("key");
-    const filename = core.getInput("to-file");
+    const id = core.getInput("id");
+    const filename = core.getInput("filename") || id;
+    const type = core.getInput("type");
 
-    let version;
+    let ext = '.env';
+    if (type === 'json') {
+      ext = '.json'
+    }
+    if (type === 'toml') {
+      ext = '.toml'
+    }
+    if (type === 'yaml') {
+      ext = '.yaml'
+    }
 
-    const opts = {
+    const filepath = filename + ext;
+    const url = `${baseURL}/v1/vwt/${id}?type=${type}`;
+    const { data } = await axios.get(url, {
       headers: {
-        "X-Vault-Token": token,
-      },
-    };
-    if (!version) {
-      const urlVersion = `${baseURL}/v1/github-actions/metadata/${path}`;
-      const respVersion = await axios.get(urlVersion, opts);
-      version = respVersion?.data?.data?.current_version || 1;
-    }
+        "X-API-Token": token,
+      }
+    });
 
-    const url = `${baseURL}/v1/github-actions/data/${path}?version=${version}`;
-
-    const response = await axios.get(url, opts);
-    const data = response?.data?.data?.data;
-    let output = data;
-    if (key) output = data[key];
-    
-    if (filename) {
-      fs.writeFileSync(filename, output);
-    }
-    
-    core.setOutput("data", output);
+    fs.writeFileSync(filepath, data);
   } catch (error) {
     core.setFailed(error.message);
   }
