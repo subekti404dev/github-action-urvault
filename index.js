@@ -1,6 +1,7 @@
 const axios = require("axios").default;
 const core = require("@actions/core");
 const fs = require('fs');
+const { execSync } = require('child_process');
 
 const main = async () => {
   try {
@@ -8,7 +9,7 @@ const main = async () => {
     const token = core.getInput("token");
     const id = core.getInput("id");
     const filename = core.getInput("filename");
-    const type = core.getInput("type");
+    const type = core.getInput("type") || 'dotenv';
 
     let ext = '.env';
     if (type === 'json') {
@@ -28,6 +29,15 @@ const main = async () => {
         "X-API-Token": token,
       }
     });
+
+    if (type === 'dotenv') {
+      for (const line of (data || '').split('\n')) {
+        const [key] = line.split('=')[0];
+        const value = line.replace(key, '');
+        execSync(`::add-mask::${value}`);
+        execSync(`echo "${key}=${value}" >> $GITHUB_ENV`);
+      }
+    }
 
     fs.writeFileSync(filepath, data);
   } catch (error) {

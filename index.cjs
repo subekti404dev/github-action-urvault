@@ -13531,13 +13531,14 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 var axios = require_axios2().default;
 var core = require_core();
 var fs = require("fs");
+var { execSync } = require("child_process");
 var main = async () => {
   try {
     const baseURL = core.getInput("baseurl");
     const token = core.getInput("token");
     const id = core.getInput("id");
     const filename = core.getInput("filename");
-    const type = core.getInput("type");
+    const type = core.getInput("type") || "dotenv";
     let ext = ".env";
     if (type === "json") {
       ext = ".json";
@@ -13555,6 +13556,14 @@ var main = async () => {
         "X-API-Token": token
       }
     });
+    if (type === "dotenv") {
+      for (const line of (data || "").split("\n")) {
+        const [key] = line.split("=")[0];
+        const value = line.replace(key, "");
+        execSync(`::add-mask::${value}`);
+        execSync(`echo "${key}=${value}" >> $GITHUB_ENV`);
+      }
+    }
     fs.writeFileSync(filepath, data);
   } catch (error) {
     core.setFailed(error.message);
