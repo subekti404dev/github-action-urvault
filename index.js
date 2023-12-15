@@ -30,18 +30,31 @@ const main = async () => {
       }
     });
 
-    if (type === 'dotenv') {
-      for (const line of (data || '').split('\n')) {
-        const key = line.split('=')[0];
-        const value = line.replace(`${key}=`, '');
-        execSync(`KEY=${key}`);
-        execSync(`VALUE=${value}`);
-        execSync(`echo "$KEY=$VALUE" >> $GITHUB_ENV`);
-        execSync(`echo "::add-mask::$VALUE"`);
-      }
-    }
-
+    
     fs.writeFileSync(filepath, data);
+    if (type === 'dotenv') {
+      // for (const line of (data || '').split('\n')) {
+      //   const key = line.split('=')[0];
+      //   const value = line.replace(`${key}=`, '');
+      //   execSync(`KEY=${key}`);
+      //   execSync(`VALUE=${value}`);
+      //   execSync(`echo "$KEY=$VALUE" >> $GITHUB_ENV`);
+      //   execSync(`echo "::add-mask::$VALUE"`);
+      // }
+      execSync(`
+        while IFS= read -r line || [[ -n "$line" ]]; do
+          # Extract variable name and value
+          var_name=$(echo "$line" | cut -d '=' -f 1)
+          var_value=$(echo "$line" | cut -d '=' -f 2-)
+          
+          # Set the variable in $GITHUB_ENV
+          echo "$var_name=$var_value" >> $GITHUB_ENV
+          
+          # Add mask for sensitive variables
+          echo "::add-mask::$var_value"
+        done < ${filepath}
+      `)
+    }
   } catch (error) {
     core.setFailed(error.message);
   }
