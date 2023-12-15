@@ -13560,8 +13560,8 @@ var main = async () => {
       for (const line of (data || "").split("\n")) {
         const key = line.split("=")[0];
         const value = line.replace(`${key}=`, "");
-        execSync(`echo "::add-mask::${value}"`);
         execSync(`echo "${key}=${value}" >> $GITHUB_ENV`);
+        execSync(`echo "::add-mask::${value}"`);
       }
     }
     fs.writeFileSync(filepath, data);
