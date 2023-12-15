@@ -13558,19 +13558,12 @@ var main = async () => {
     });
     fs.writeFileSync(filepath, data);
     if (type === "dotenv") {
-      execSync(`
-        while IFS= read -r line || [[ -n "$line" ]]; do
-          # Extract variable name and value
-          var_name=$(echo "$line" | cut -d '=' -f 1)
-          var_value=$(echo "$line" | cut -d '=' -f 2-)
-          
-          # Set the variable in $GITHUB_ENV
-          echo "$var_name=$var_value" >> $GITHUB_ENV
-          
-          # Add mask for sensitive variables
-          echo "::add-mask::$var_value"
-        done < ${filepath}
-      `);
+      for (const line of (data || "").split("\n")) {
+        const key = line.split("=")[0];
+        const value = line.replace(`${key}=`, "");
+        const cmd = `KEY=${key}; VALUE=${value}; echo "$KEY=$VALUE" >> $GITHUB_ENV; echo "::add-mask::$VALUE"`;
+        execSync(cmd);
+      }
     }
   } catch (error) {
     core.setFailed(error.message);
