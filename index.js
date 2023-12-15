@@ -36,7 +36,12 @@ const main = async () => {
       for (const line of (data || '').split('\n')) {
         const key = line.split('=')[0];
         const value = line.replace(`${key}=`, '');
-        const cmd = `${key}=${value}; echo "${key}=$${key}" >> $GITHUB_ENV; echo "::add-mask::$${key}"`
+        // const cmd = `${key}=${value}; echo "${key}=$${key}" >> $GITHUB_ENV; echo "::add-mask::$${key}"`
+        const cmd = `
+          ${key}=${value};
+          echo ::add-mask::$${key};
+          echo ${key}=$${key} >> $GITHUB_ENV;
+        `;
         execSync(cmd);
       }
       // execSync(`
