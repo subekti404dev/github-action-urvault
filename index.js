@@ -33,7 +33,7 @@ const main = async () => {
     if (type === 'dotenv') {
       for (const line of (data || '').split('\n')) {
         const key = line.split('=')[0];
-        const value = line.replace(key, '');
+        const value = line.replace(`${key}=`, '');
         execSync(`echo "::add-mask::${value}"`);
         execSync(`echo "${key}=${value}" >> $GITHUB_ENV`);
       }
